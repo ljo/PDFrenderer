@@ -9,6 +9,7 @@ import java.awt.print.Paper;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import javax.swing.JComponent;
@@ -32,15 +33,25 @@ public class PDFDisplay extends JComponent {
 	}
 
 	private void readFile() {
-		try(BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(fileName));){
+	    BufferedInputStream inputStream = null;
+		try{
+		        inputStream = new BufferedInputStream(new FileInputStream(fileName));
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			int b;
 			while ((b = inputStream.read()) != -1) {
 				outputStream.write(b);
 			}
 			this.bytes = outputStream.toByteArray();	
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+		    try {
+			if (inputStream != null) {
+			    inputStream.close();
+			}
+		    } catch (IOException ioe) {
+			ioe.printStackTrace();
+		    }
 		}
 	}
 
